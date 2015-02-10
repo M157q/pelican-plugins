@@ -38,11 +38,15 @@ def share_post(content):
     url = article_url(content)
     summary = article_summary(content)
 
-    tweet = ('%s%s%s' % (title, quote(' '), url)).encode('utf-8')
+    if content.settings['TWITTER_USERNAME']:
+        tweet = ('%s' % (title + quote('\n') + url + quote('\n') + 'via @'+content.settings['TWITTER_USERNAME'])).encode('utf-8')
+    else:
+        tweet = ('%s' % (title + quote('\n') + url)).encode('utf-8')
+
     diaspora_link = 'https://sharetodiaspora.github.io/?title=%s&url=%s' % (title, url)
-    facebook_link = 'http://www.facebook.com/sharer/sharer.php?s=100&amp;p%%5Burl%%5D=%s' % url
+    facebook_link = 'https://www.facebook.com/sharer/sharer.php?s=100&amp;p%%5Burl%%5D=%s' % url
     gplus_link = 'https://plus.google.com/share?url=%s' % url
-    twitter_link = 'http://twitter.com/home?status=%s' % tweet
+    twitter_link = 'https://twitter.com/home?status=%s' % tweet
     mail_link = 'mailto:?subject=%s&amp;body=%s' % (title, url)
 
     share_links = {
