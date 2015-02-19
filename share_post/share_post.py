@@ -31,17 +31,24 @@ def article_summary(content):
     return quote(BeautifulSoup(content.summary, 'html.parser').get_text().strip().encode('utf-8'))
 
 
+def article_tags(content):
+    return quote(BeautifulSoup(content.tags, 'html.parser').get_text().strip().encode('utf-8'))
+
+
 def share_post(content):
     if isinstance(content, contents.Static):
         return
     title = article_title(content)
     url = article_url(content)
     summary = article_summary(content)
+    tweet = ('%s' % (title + quote('\n') + url + quote('\n'))).encode('utf-8')
 
     if content.settings['TWITTER_USERNAME']:
-        tweet = ('%s' % (title + quote('\n') + url + quote('\n') + 'via @'+content.settings['TWITTER_USERNAME'])).encode('utf-8')
-    else:
-        tweet = ('%s' % (title + quote('\n') + url)).encode('utf-8')
+        tweet += (quote('via @') + content.settings['TWITTER_USERNAME'] + quote('\n')).encode('utf-8')
+
+    #if hasattr(content, 'tags'):
+    #    for tag in content.tags:
+    #        tweet += (quote('#') + str(tag) + quote(' ')).encode('utf-8')
 
     diaspora_link = 'https://sharetodiaspora.github.io/?title=%s&url=%s' % (title, url)
     facebook_link = 'https://www.facebook.com/sharer/sharer.php?s=100&amp;p%%5Burl%%5D=%s' % url
