@@ -42,19 +42,28 @@ def share_post(content):
     title = article_title(content)
     url = article_url(content)
     summary = article_summary(content)
-    tweet = ('%s' % (title + quote('\n') + url + quote('\n'))).encode('utf-8')
 
+    tweet = (
+        '%s%s%s' % (
+            title,
+            quote('\n'),
+            url,
+        )
+    ).encode('utf-8')
     if content.settings['TWITTER_USERNAME']:
-        tweet += (quote('via @') + content.settings['TWITTER_USERNAME'] + quote('\n')).encode('utf-8')
-
-    #if hasattr(content, 'tags'):
-    #    for tag in content.tags:
-    #        tweet += (quote('#') + str(tag) + quote(' ')).encode('utf-8')
+        tweet += (
+            '%s%s%s%s' % (
+                quote('\n'),
+                quote('via @'),
+                content.settings['TWITTER_USERNAME'],
+                quote('\n'),
+            )
+        ).encode('utf-8')
 
     diaspora_link = 'https://sharetodiaspora.github.io/?title=%s&url=%s' % (title, url)
     facebook_link = 'https://www.facebook.com/sharer/sharer.php?s=100&amp;p%%5Burl%%5D=%s' % url
     gplus_link = 'https://plus.google.com/share?url=%s' % url
-    twitter_link = 'https://twitter.com/intent/tweet?text=%s&url=%s' % (title, url)
+    twitter_link = 'https://twitter.com/intent/tweet?text=%s' % (tweet)
     linkedin_link = 'https://www.linkedin.com/shareArticle?mini=true&url=%s&title=%s&summary=%s&source=%s' % (
         url, title, summary, url
     )
